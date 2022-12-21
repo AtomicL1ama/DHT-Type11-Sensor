@@ -1,4 +1,5 @@
 #include <dht_nonblocking.h>
+#include <math.h>
 #define BLUE 9
 #define GREEN 10
 #define RED 11
@@ -69,7 +70,19 @@ static void cycle_RGB_colors(){
   }
 }
 
-
+static void set_RGB_color(float tempF, float humidity){
+  redValue =  int(250-(5*(90 - tempF)));
+  blueValue = int(5*(90 - tempF));
+  // greenValue = ceil(2.5*humidity);
+  // analogWrite(GREEN, greenValue);
+  analogWrite(BLUE, blueValue);
+  analogWrite(RED, redValue);
+  Serial.print( "T = " );
+  Serial.print( tempF, 1 );
+  Serial.print( " deg. C, H = " );
+  Serial.print( humidity, 1 );
+  Serial.println( "%" );    
+}
 
 void loop( )
 {
@@ -77,11 +90,9 @@ void loop( )
   float humidity;
   if( measure_environment( &temperature, &humidity ) == true )
   {
-    Serial.print( "T = " );
-    Serial.print( temperature, 1 );
-    Serial.print( " deg. C, H = " );
-    Serial.print( humidity, 1 );
-    Serial.println( "%" );
-  }  
+    float tempF = (temperature * (9/5)) + 32.0;    
+    
+    set_RGB_color(tempF, humidity);
+ }  
   
 }
